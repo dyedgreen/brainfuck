@@ -1,7 +1,9 @@
-# brainfuck
+# Brainfuck
 A minimal brainfuck interpreter written in C. This implements the brainfuck language as
 described in [the relevant Wikipedia article](https://en.wikipedia.org/wiki/Brainfuck). The folder
 examples contains two example scripts.
+
+Brainfuck was originally created by Urban Müller in 1993 and can be though of as a basic Turing Machine.
 
 ## Building the interpreter
 To build this interpreter, it should be sufficient to run `make` in the projects root directory. This will
