@@ -7,11 +7,12 @@
 #define ERROR_FILE "\033[1;31mError:\033[0m Could not read file \"%s\".\n"
 #define ERROR_MEMORY "\033[1;31mError:\033[0m Insufficient memory.\n"
 #define NOTICE_FLAG "\033[1;34mNotice:\033[0m Command line flag \"%s\" not recognized.\n"
-#define VERSION "Version 1.0\nAuthor: Tilman Roeder\n"
-#define HELP "usage: brainfuck [-hHmMvV] filename\n"\
-             "       h or H : Print this help message\n"\
-             "       m or M : Print memory after script halts\n"\
-             "       v or V : Print interpreter version\n"
+#define VERSION "Version 1.1\nAuthor: Tilman Roeder\n"
+#define HELP "usage: brainfuck [-himv] filename\n"\
+             "       h : Print this help message\n"\
+             "       i : Print data from tape as base 10 numbers\n"\
+             "       m : Print memory after script halts\n"\
+             "       v : Print interpreter version\n"
 
 
 typedef struct tape {
@@ -23,6 +24,10 @@ typedef struct tape {
 typedef enum {
   Left, Right,
 } Direction;
+
+typedef enum {
+  Char, Int,
+} PrintStyle;
 
 
 // Reads a given source file and prints any
@@ -68,6 +73,13 @@ char* readFile(char *file_name) {
         } else {
           open_loops --;
           line_last_close = line;
+        }
+        // Catch brackets that are the wrong way around
+        if (open_loops < 0) {
+          printf(ERROR_BRACKETS, line_last_close);
+          free(buffer);
+          fclose(file);
+          return NULL;
         }
         // fallthrough
       case '>':
@@ -192,7 +204,7 @@ void printTape(Tape *tape) {
   printf("END OF TAPE\n");
 }
 
-void run(char *script, Tape *tape) {
+void run(char *script, Tape *tape, PrintStyle print_style) {
   int i = 0;
   int pos = 0;
   while (script[i] != '\0') {
@@ -220,7 +232,11 @@ void run(char *script, Tape *tape) {
         i ++;
         break;
       case '.':
-        putchar(tape->data[pos]);
+        if (print_style == Int) {
+          printf("%d ", (int)tape->data[pos]);
+        } else {
+          putchar(tape->data[pos]);
+        }
         i ++;
         break;
       case ',':
@@ -271,21 +287,22 @@ int main(int argc, char *argv[]) {
   // Accept arguments and modifiers
   char *file = NULL;
   int m_debug = 0;
+  int m_print_int = 0;
   int m_version = 0;
   int m_help = 0;
   for (int i = 1; i < argc; i ++) {
     if (argv[i][0] == '-') {
       switch (argv[i][1]) {
         case 'm':
-        case 'M':
           m_debug = 1;
           break;
+        case 'i':
+          m_print_int = 1;
+          break;
         case 'v':
-        case 'V':
           m_version = 1;
           break;
         case 'h':
-        case 'H':
           m_help = 1;
           break;
         default:
@@ -318,7 +335,7 @@ int main(int argc, char *argv[]) {
     if (tape == NULL) {
       printf(ERROR_MEMORY);
     } else {
-      run(script, tape);
+      run(script, tape, m_print_int ? Int : Char);
       printf("\n");
       // Debug mode, print tape state after halt
       if (m_debug) printTape(tape);
