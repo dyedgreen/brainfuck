@@ -7,6 +7,7 @@
 #define ERROR_FILE "\033[1;31mError:\033[0m Could not read file \"%s\".\n"
 #define ERROR_MEMORY "\033[1;31mError:\033[0m Insufficient memory.\n"
 #define NOTICE_FLAG "\033[1;34mNotice:\033[0m Command line flag \"%s\" not recognized.\n"
+#define PROMPT "Input: "
 #define VERSION "Version 1.1\nAuthor: Tilman Roeder\n"
 #define HELP "usage: brainfuck [-himv] filename\n"\
              "       h : Print this help message\n"\
@@ -240,7 +241,9 @@ void run(char *script, Tape *tape, PrintStyle print_style) {
         i ++;
         break;
       case ',':
+        printf(PROMPT);
         tape->data[pos] = getchar();
+        while (getchar() != '\n') {}
         i ++;
         break;
       case '[':
