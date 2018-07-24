@@ -149,12 +149,11 @@ void destroyTape(Tape *tape) {
     tape = tape->prev;
   }
   Tape *prev;
-  while (tape->next != NULL) {
+  while (tape != NULL) {
     prev = tape;
     tape = tape->next;
     free(prev);
   }
-  free(tape);
 }
 int seekTape(Tape **tape, int *pos, Direction dir) {
   switch (dir) {
