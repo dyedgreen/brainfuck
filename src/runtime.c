@@ -126,6 +126,8 @@ char* readFile(char *file_name) {
     }
   }
   script[inst_count] = '\0';
+  free(buffer);
+  fclose(file);
   return script;
 }
 
