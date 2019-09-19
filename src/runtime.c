@@ -9,7 +9,7 @@
 #define NOTICE_FLAG "\033[1;34mNotice:\033[0m Command line flag \"%s\" not recognized.\n"
 #define PROMPT "Input: "
 #define VERSION "Version 1.1\nAuthor: Tilman Roeder\n"
-#define HELP "usage: brainfuck [-himv] filename\n"\
+#define HELP "usage: %s [-himv] filename\n"\
              "       h : Print this help message\n"\
              "       i : Print data from tape as base 10 numbers\n"\
              "       m : Print memory after script halts\n"\
@@ -325,10 +325,10 @@ int main(int argc, char *argv[]) {
   } else if (m_help) {
     printf(VERSION);
     printf("\n");
-    printf(HELP);
+    printf(HELP, argv[0]);
     return 0;
   } else if (file == NULL) {
-    printf(HELP);
+    printf(HELP, argv[0]);
     return 0;
   }
 
